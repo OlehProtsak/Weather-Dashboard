@@ -8,8 +8,8 @@ function getWeatherByCity(cityName) {
     method: "GET",
   })
     .then(function (response) {
-      console.log(response);
       displayCurrentWeather(response);
+      displayForecast(response);
     })
     .fail(function (error) {
       console.error("Error fetching weather data:", error);
@@ -53,4 +53,42 @@ function displayCurrentWeather(response) {
     humidityParagraph,
     windParagraph
   );
+
+  $("<h4>5-Day Forecast:</h4>").insertAfter(currentDay);
+}
+
+function displayForecast(response) {
+  const forecastSection = $("#forecast");
+  let currentDate = dayjs().startOf("day");
+
+  const forecastList = response.list.filter(function (forecast) {
+    if (dayjs.unix(forecast.dt).startOf("day").isAfter(currentDate)) {
+      currentDate = dayjs.unix(forecast.dt).startOf("day");
+      return forecast;
+    }
+  });
+
+  forecastSection.empty();
+
+  forecastList.forEach(function (forecast) {
+    const date = dayjs.unix(forecast.dt).format("MMMM D, YYYY");
+    const icon = forecast.weather[0].icon;
+    const temperature = forecast.main.temp;
+    const humidity = forecast.main.humidity;
+
+    const forecastItem = `
+    <div class="col-md-2 mb-2">
+      <div class="card card-styles">
+        <div class="card-body">
+          <h5 class="card-title">${date}</h5>
+          <img src="https://openweathermap.org/img/wn/${icon}.png" alt="Weather Icon">
+          <p class="card-text">Temp: ${temperature}°C</p>
+          <p class="card-text">Humidity: ${humidity}%</p>
+        </div>
+      </div>
+    </div>
+  `;
+
+    forecastSection.append(forecastItem);
+  });
 }

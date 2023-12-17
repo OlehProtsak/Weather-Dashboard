@@ -1,0 +1,11 @@
+.card-styles {
+  color: #fff;
+  background: rgb(8, 2, 79);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: bold;
+}
