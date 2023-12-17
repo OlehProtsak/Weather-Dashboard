@@ -13,7 +13,8 @@ function getWeatherByCity(cityName) {
       addToHistory(cityName);
     })
     .fail(function (error) {
-      console.error("Error fetching weather data:", error);
+      // console.error("Error fetching weather data:", error);
+      alert(`${cityName} doesn't exist`);
     });
 }
 
@@ -105,12 +106,33 @@ function displayForecast(response) {
 }
 
 function addToHistory(cityName) {
-  const existingHistory = JSON.parse(localStorage.getItem("cityHistory")) || [];
+  const storedHistory = localStorage.getItem("cityHistory");
+  const capitalizedCityName =
+    cityName.toLowerCase().charAt(0).toUpperCase() +
+    cityName.toLowerCase().slice(1);
 
-  if (!existingHistory.includes(cityName)) {
-    existingHistory.unshift(cityName);
+  let result = false;
 
-    localStorage.setItem("cityHistory", JSON.stringify(existingHistory));
+  const existingHistory = JSON.parse(storedHistory) || [];
+
+  if (Array.isArray(existingHistory)) {
+    for (let i = 0; i < existingHistory.length; i++) {
+      if (
+        existingHistory[i].toLowerCase() === capitalizedCityName.toLowerCase()
+      ) {
+        result = true;
+      }
+    }
+
+    if (!result) {
+      existingHistory.unshift(capitalizedCityName);
+      localStorage.setItem("cityHistory", JSON.stringify(existingHistory));
+
+      updateHistoryDisplay();
+    }
+  } else {
+    const newHistory = [capitalizedCityName];
+    localStorage.setItem("cityHistory", JSON.stringify(newHistory));
 
     updateHistoryDisplay();
   }
@@ -123,9 +145,14 @@ function updateHistoryDisplay() {
 
   cityHistory.forEach((city) => {
     $("#history").append(
-      `<button type="button" class="btn btn-secondary mb-2">${city}</button>`
+      `<button type="button" class="btn btn-secondary mb-2" data-city=${city.toLowerCase()}>${city}</button>`
     );
   });
 }
+
+$("#history").on("click", "[data-city]", function () {
+  const cityName = $(this).attr("data-city");
+  getWeatherByCity(cityName);
+});
 
 updateHistoryDisplay();
