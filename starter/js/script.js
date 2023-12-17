@@ -24,6 +24,7 @@ $("#search-form").on("submit", function (event) {
 function displayCurrentWeather(response) {
   const currentDay = $("#today");
   currentDay.empty();
+  currentDay.next().empty();
 
   const currentWeather = response.list[0];
   const cityName = response.city.name;
