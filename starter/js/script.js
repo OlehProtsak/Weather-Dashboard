@@ -1,8 +1,11 @@
 const apiKey = "e063538dbd7a64e6085495b882b71be5";
 
+// Function to fetch weather data by city name
 function getWeatherByCity(cityName) {
+  // Construct the API URL
   const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${apiKey}&units=metric`;
 
+  // Make an AJAX request to the OpenWeatherMap API
   $.ajax({
     url: apiUrl,
     method: "GET",
@@ -13,13 +16,16 @@ function getWeatherByCity(cityName) {
       addToHistory(cityName);
     })
     .fail(function (error) {
-      // console.error("Error fetching weather data:", error);
+      // Handle errors by logging to the console and displaying an alert
+      console.error("Error fetching weather data:", error);
       alert(`${cityName} doesn't exist`);
     });
 }
 
+// Event listener for the search form submission
 $("#search-form").on("submit", function (event) {
   event.preventDefault();
+  // Get user input and trigger weather data retrieval
   const userInput = $("#search-input");
   const cityName = userInput.val().trim();
 
@@ -27,9 +33,11 @@ $("#search-form").on("submit", function (event) {
     getWeatherByCity(cityName);
   }
 
+  // Clear the input field
   userInput.val("");
 });
 
+// Function to display current weather data
 function displayCurrentWeather(response) {
   const currentDay = $("#today");
   currentDay.empty();
@@ -50,6 +58,7 @@ function displayCurrentWeather(response) {
   const temperatureParagraph = $("<p>");
   const humidityParagraph = $("<p>");
   const windParagraph = $("<p>");
+
   iconEl.attr("src", `https://openweathermap.org/img/wn/${icon}.png`);
   heading.text(`${cityName} (${date})`);
   heading.append(iconEl);
@@ -69,6 +78,7 @@ function displayCurrentWeather(response) {
   currentDay.append(container);
 }
 
+// Function to display forecast data
 function displayForecast(response) {
   const forecastSection = $("#forecast");
   let currentDate = dayjs().startOf("day");
@@ -105,7 +115,9 @@ function displayForecast(response) {
   });
 }
 
+// Function to add city to the search history
 function addToHistory(cityName) {
+  // Retrieve existing search history from local storage
   const storedHistory = localStorage.getItem("cityHistory");
   const capitalizedCityName =
     cityName.toLowerCase().charAt(0).toUpperCase() +
@@ -113,8 +125,10 @@ function addToHistory(cityName) {
 
   let result = false;
 
+  // Parse existing search history or initialize an empty array
   const existingHistory = JSON.parse(storedHistory) || [];
 
+  // Check if the city is already in the search history
   if (Array.isArray(existingHistory)) {
     for (let i = 0; i < existingHistory.length; i++) {
       if (
@@ -124,13 +138,16 @@ function addToHistory(cityName) {
       }
     }
 
+    // Add the city to the search history if it's not already present
     if (!result) {
       existingHistory.unshift(capitalizedCityName);
       localStorage.setItem("cityHistory", JSON.stringify(existingHistory));
 
+      // Update the display of search history
       updateHistoryDisplay();
     }
   } else {
+    // If no search history exists, create a new one
     const newHistory = [capitalizedCityName];
     localStorage.setItem("cityHistory", JSON.stringify(newHistory));
 
@@ -138,11 +155,14 @@ function addToHistory(cityName) {
   }
 }
 
+// Function to update the display of search history
 function updateHistoryDisplay() {
   $("#history").empty();
 
+  // Retrieve the search history from local storage
   const cityHistory = JSON.parse(localStorage.getItem("cityHistory")) || [];
 
+  // Append each city button to the search history display
   cityHistory.forEach((city) => {
     $("#history").append(
       `<button type="button" class="btn btn-secondary mb-2" data-city=${city.toLowerCase()}>${city}</button>`
@@ -150,9 +170,11 @@ function updateHistoryDisplay() {
   });
 }
 
+// Event listener for clicking on a city in the search history
 $("#history").on("click", "[data-city]", function () {
   const cityName = $(this).attr("data-city");
   getWeatherByCity(cityName);
 });
 
+// Initialize the search history display on page load
 updateHistoryDisplay();
