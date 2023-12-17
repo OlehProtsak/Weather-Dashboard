@@ -28,29 +28,31 @@
             Search for a City:
           </h2>
           <form id="search-form" class="form">
-            <div class="form-inline form-group">
-              <div class="input-group">
-                <input
-                  class="form-input weather-search"
-                  type="text"
-                  id="search-input"
-                  placeholder="London"
-                  aria-labelledby="form-heading"
-                  aria-controls="today forecast"
-                />
-                <div class="input-group-append">
-                  <button
-                    type="submit"
-                    class="btn btn-outline-info"
-                    id="search-button"
-                    aria-label="submit search"
-                  >
-                    Search
-                  </button>
-                  <hr class="hr weather-hr" />
-                </div>
-              </div>
+            <div class="form-group">
+              <label for="search-input" class="sr-only"
+                >Search for a City:</label
+              >
+              <input
+                class="form-control weather-search"
+                type="text"
+                id="search-input"
+                placeholder="London"
+                aria-labelledby="form-heading"
+                aria-controls="today forecast"
+              />
             </div>
+
+            <div class="form-group">
+              <button
+                type="submit"
+                class="btn btn-outline-info btn-block"
+                id="search-button"
+                aria-label="submit search"
+              >
+                Search
+              </button>
+            </div>
+            <hr />
           </form>
           <div class="list-group" id="history"></div>
         </aside>
@@ -62,6 +64,7 @@
             role="region"
             aria-live="polite"
           ></section>
+          <h4 class="hide">5-Day Forecast:</h4>
           <section
             id="forecast"
             class="row mt-3"
