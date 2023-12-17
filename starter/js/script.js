@@ -19,7 +19,14 @@ function getWeatherByCity(cityName) {
 
 $("#search-form").on("submit", function (event) {
   event.preventDefault();
-  getWeatherByCity("Houston");
+  const userInput = $("#search-input");
+  const cityName = userInput.val().trim();
+
+  if (cityName) {
+    getWeatherByCity(cityName);
+  }
+
+  userInput.val("");
 });
 
 function displayCurrentWeather(response) {
