@@ -10,6 +10,7 @@ function getWeatherByCity(cityName) {
     .then(function (response) {
       displayCurrentWeather(response);
       displayForecast(response);
+      addToHistory(cityName);
     })
     .fail(function (error) {
       console.error("Error fetching weather data:", error);
@@ -18,13 +19,13 @@ function getWeatherByCity(cityName) {
 
 $("#search-form").on("submit", function (event) {
   event.preventDefault();
-  getWeatherByCity("London");
+  getWeatherByCity("Houston");
 });
 
 function displayCurrentWeather(response) {
   const currentDay = $("#today");
   currentDay.empty();
-  currentDay.next().empty();
+  $("h4").removeClass("hide");
 
   const currentWeather = response.list[0];
   const cityName = response.city.name;
@@ -35,6 +36,7 @@ function displayCurrentWeather(response) {
   const windSpeed = currentWeather.wind.speed;
 
   // Generate HTML elements to visually represent data on a webpage
+  const container = $("<div>");
   const heading = $("<h2>");
   const iconEl = $("<img>");
   const temperatureParagraph = $("<p>");
@@ -46,16 +48,16 @@ function displayCurrentWeather(response) {
   temperatureParagraph.text(`Temperature: ${temperature}°C`);
   humidityParagraph.text(`Humidity: ${humidity}%`);
   windParagraph.text(`Wind Speed: ${windSpeed} m/s`);
-  currentDay.addClass("border", "border-dark");
+  currentDay.addClass("border border-dark");
 
-  currentDay.append(
+  container.append(
     heading,
     temperatureParagraph,
     humidityParagraph,
     windParagraph
   );
 
-  $("<h4>5-Day Forecast:</h4>").insertAfter(currentDay);
+  currentDay.append(container);
 }
 
 function displayForecast(response) {
@@ -78,7 +80,7 @@ function displayForecast(response) {
     const humidity = forecast.main.humidity;
 
     const forecastItem = `
-    <div class="col-md-2 mb-2">
+    <div class="col-lg mb-2">
       <div class="card card-styles">
         <div class="card-body">
           <h5 class="card-title">${date}</h5>
@@ -92,4 +94,14 @@ function displayForecast(response) {
 
     forecastSection.append(forecastItem);
   });
+}
+
+function addToHistory(cityName) {
+  const existingHistory = JSON.parse(localStorage.getItem("cityHistory")) || [];
+
+  if (!existingHistory.includes(cityName)) {
+    existingHistory.unshift(cityName);
+
+    localStorage.setItem("cityHistory", JSON.stringify(existingHistory));
+  }
 }
