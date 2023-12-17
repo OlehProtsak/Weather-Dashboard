@@ -57,6 +57,7 @@ function displayCurrentWeather(response) {
     windParagraph
   );
 
+  currentDay.css("padding-left", "1rem");
   currentDay.append(container);
 }
 
@@ -103,5 +104,21 @@ function addToHistory(cityName) {
     existingHistory.unshift(cityName);
 
     localStorage.setItem("cityHistory", JSON.stringify(existingHistory));
+
+    updateHistoryDisplay();
   }
 }
+
+function updateHistoryDisplay() {
+  $("#history").empty();
+
+  const cityHistory = JSON.parse(localStorage.getItem("cityHistory")) || [];
+
+  cityHistory.forEach((city) => {
+    $("#history").append(
+      `<button type="button" class="btn btn-secondary mb-2">${city}</button>`
+    );
+  });
+}
+
+updateHistoryDisplay();
